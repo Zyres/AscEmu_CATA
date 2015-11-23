@@ -95,7 +95,7 @@ void WorldSession::HandleChangeVehicleSeat(WorldPacket& recv_data)
             MovementInfo mov;
 
             recv_data >> src_guid;
-            mov.init(recv_data);
+            mov.ReadMovement(recv_data);
             recv_data >> dst_guid;
             recv_data >> seat;
 

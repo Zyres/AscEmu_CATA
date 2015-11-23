@@ -8336,103 +8336,13 @@ void Unit::SendEnvironmentalDamageLog(uint64 guid, uint8 type, uint32 damage)
 
 void Unit::BuildMovementPacket(ByteBuffer* data)
 {
-    *data << uint32(GetUnitMovementFlags());            // movement flags
-    *data << uint16(GetExtraUnitMovementFlags());       // 2.3.0
-    *data << uint32(GetMovementInfo()->time);                       // time / counter
-    *data << GetPositionX();
-    *data << GetPositionY();
-    *data << GetPositionZ();
-    *data << GetOrientation();
 
-    // 0x00000200
-    /*if (GetUnitMovementFlags() & MOVEFLAG_TRANSPORT)
-    {
-        if (IsPlayer() && static_cast<Player*>(this)->m_CurrentTransporter)
-            transporter_info.guid = static_cast<Player*>(this)->m_CurrentTransporter->GetGUID();
-        if (Unit* u = GetVehicleBase())
-            transporter_info.guid = u->GetGUID();
-        *data << transporter_info.guid;
-        *data << transporter_info.x;
-        *data << transporter_info.y;
-        *data << transporter_info.z;
-        *data << transporter_info.o;
-        *data << transporter_info.flags;
-        *data << transporter_info.seat;
-
-        if (GetExtraUnitMovementFlags() & MOVEFLAG2_ALLOW_PITCHING)
-            *data << uint32(GetMovementInfo()->transUnk_2);
-    }*/
-
-    // 0x02200000
-    if ((GetUnitMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING))
-        || (GetExtraUnitMovementFlags() & MOVEFLAG2_ALLOW_PITCHING))
-        *data << (float)GetMovementInfo()->pitch;
-
-    *data << (uint32)GetMovementInfo()->unk12;
-
-    // 0x00001000
-    /*if (GetUnitMovementFlags() & MOVEFLAG_REDIRECTED)
-    {
-        *data << (float)GetMovementInfo()->redirectVelocity;
-        *data << (float)GetMovementInfo()->redirectSin;
-        *data << (float)GetMovementInfo()->redirectCos;
-        *data << (float)GetMovementInfo()->redirect2DSpeed;
-    }
-
-    // 0x04000000
-    if (GetUnitMovementFlags() & MOVEFLAG_SPLINE_MOVER)
-        *data << (float)GetMovementInfo()->unk13;*/
 }
 
 
 void Unit::BuildMovementPacket(ByteBuffer* data, float x, float y, float z, float o)
 {
-    *data << uint32(GetUnitMovementFlags());            // movement flags
-    *data << uint16(GetExtraUnitMovementFlags());       // 2.3.0
-    *data << uint32(GetMovementInfo()->time);                       // time / counter
-    *data << x;
-    *data << y;
-    *data << z;
-    *data << o;
 
-    // 0x00000200
-    /*if (GetUnitMovementFlags() & MOVEFLAG_TRANSPORT)
-    {
-        if (IsPlayer() && static_cast<Player*>(this)->m_CurrentTransporter)
-            transporter_info.guid = static_cast<Player*>(this)->m_CurrentTransporter->GetGUID();
-        if (Unit* u = GetVehicleBase())
-            transporter_info.guid = u->GetGUID();
-        *data << transporter_info.guid;
-        *data << transporter_info.x;
-        *data << transporter_info.y;
-        *data << transporter_info.z;
-        *data << transporter_info.o;
-        *data << transporter_info.flags;
-        *data << transporter_info.seat;
-
-        if (GetExtraUnitMovementFlags() & MOVEFLAG2_ALLOW_PITCHING)
-            *data << uint32(GetMovementInfo()->transUnk_2);
-    }*/
-
-    // 0x02200000
-    if ((GetUnitMovementFlags() & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING))
-        || (GetExtraUnitMovementFlags() & MOVEFLAG2_ALLOW_PITCHING))
-        *data << (float)GetMovementInfo()->pitch;
-
-    *data << (uint32)GetMovementInfo()->unk11;
-
-    // 0x00001000
-    /*if (GetUnitMovementFlags() & MOVEFLAG_REDIRECTED)
-    {
-        *data << (float)GetMovementInfo()->redirectVelocity;
-        *data << (float)GetMovementInfo()->redirectSin;
-        *data << (float)GetMovementInfo()->redirectCos;
-        *data << (float)GetMovementInfo()->redirect2DSpeed;
-    }
-
-    // 0x04000000
-    if (GetUnitMovementFlags() & MOVEFLAG_SPLINE_MOVER)
-        *data << (float)GetMovementInfo()->unk13;*/
 }
 
 void Unit::setLevel(uint32 level)

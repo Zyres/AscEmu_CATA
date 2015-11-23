@@ -326,7 +326,18 @@ static MovementFlagName MoveFlagsToNames[] =
 static const uint32 nmovementflags = sizeof(MoveFlagsToNames) / sizeof(MovementFlagName);
 void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
 {
-    CHECK_INWORLD_RETURN
+    uint16 opcode = recv_data.GetOpcode();
+
+    WoWGuid guid = _player->GetGUID();
+    if (guid != m_MoverWoWGuid.GetOldGuid())
+        return;
+
+    // Player is in control of some entity
+    Unit* mover = _player->GetMapMgr()->GetUnit(m_MoverWoWGuid.GetOldGuid());
+    if (mover == nullptr)                   // there must be a mover!
+        return;
+
+    movement_info.ReadMovement(recv_data);          //Init MovementInfo (rewrite that...)
 
     bool moved = true;
 
@@ -344,48 +355,24 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
     /************************************************************************/
     /* Clear standing state to stand.				                        */
     /************************************************************************/
-    if (recv_data.GetOpcode() == CMSG_MOVE_START_FORWARD)
+    if (opcode == CMSG_MOVE_START_FORWARD)
         _player->SetStandState(STANDSTATE_STAND);
 
-    /************************************************************************/
-    /* Make sure the packet is the correct size range.                      */
-    /************************************************************************/
-    //if (recv_data.size() > 80) { Disconnect(); return; }
-
-    /************************************************************************/
-    /* Read Movement Data Packet                                            */
-    /************************************************************************/
-    WoWGuid guid;
-    recv_data >> guid;
-    movement_info.init(recv_data);
-
-    if (guid != m_MoverWoWGuid.GetOldGuid())
-    {
-        return;
-    }
-
-    // Player is in control of some entity, so we move that instead of the player
-    Unit* mover = _player->GetMapMgr()->GetUnit(m_MoverWoWGuid.GetOldGuid());
-    if (mover == NULL)
-        return;
-
     /* Anti Multi-Jump Check */
-    if (recv_data.GetOpcode() == CMSG_MOVE_JUMP && _player->jumping == true && !GetPermissionCount())
+    if (opcode == CMSG_MOVE_JUMP && _player->jumping == true && !GetPermissionCount())
     {
         sCheatLog.writefromsession(this, "Detected jump hacking");
         Disconnect();
         return;
     }
-    if (recv_data.GetOpcode() == CMSG_MOVE_FALL_LAND || movement_info.flags & MOVEMENTFLAG_SWIMMING)
+    if (opcode == CMSG_MOVE_FALL_LAND || movement_info.flags & MOVEMENTFLAG_SWIMMING)
         _player->jumping = false;
-    if (!_player->jumping && (recv_data.GetOpcode() == CMSG_MOVE_JUMP || movement_info.flags & MOVEMENTFLAG_FALLING))
+    if (!_player->jumping && (opcode == CMSG_MOVE_JUMP || movement_info.flags & MOVEMENTFLAG_FALLING))
         _player->jumping = true;
 
     /************************************************************************/
     /* Update player movement state                                         */
     /************************************************************************/
-
-    uint16 opcode = recv_data.GetOpcode();
     switch (opcode)
     {
         case CMSG_MOVE_START_FORWARD:
@@ -676,7 +663,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
 
                 /* set variables */
                 mover->transporter_info.guid = movement_info.transGuid;
-                mover->transporter_info.flags = movement_info.transUnk;
+                //mover->transporter_info.flags = movement_info.transUnk;
                 mover->transporter_info.x = movement_info.transX;
                 mover->transporter_info.y = movement_info.transY;
                 mover->transporter_info.z = movement_info.transZ;
@@ -685,7 +672,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
             else
             {
                 /* no changes */
-                mover->transporter_info.flags = movement_info.transUnk;
+                //mover->transporter_info.flags = movement_info.transUnk;
                 mover->transporter_info.x = movement_info.transX;
                 mover->transporter_info.y = movement_info.transY;
                 mover->transporter_info.z = movement_info.transZ;
@@ -787,7 +774,7 @@ void WorldSession::HandleMoveNotActiveMoverOpcode(WorldPacket& recv_data)
     if (guid == m_MoverWoWGuid)
         return;
 
-    movement_info.init(recv_data);
+    movement_info.ReadMovement(recv_data);
 
     if ((guid != uint64(0)) && (guid == _player->GetCharmedUnitGUID()))
         m_MoverWoWGuid = guid;
@@ -921,18 +908,20 @@ void WorldSession::HandleTeleportCheatOpcode(WorldPacket& recv_data)
 }
 
 
-void MovementInfo::init(WorldPacket& data)
+void MovementInfo::ReadMovement(WorldPacket& data)
 {
+
+    ///////////////////////////////////////////////////////
     transGuid = 0;
-    unk13 = 0;
-    data >> flags >> unk_230 >> time;
+    splineElevation = 0;
+    data >> flags >> flags2 >> time;
     data >> x >> y >> z >> orientation;
 
     /*if (flags & MOVEFLAG_TRANSPORT)
     {
         data >> transGuid >> transX >> transY >> transZ >> transO >> transUnk >> transUnk_2;
     }*/
-    if (flags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING) || unk_230 & 0x20)
+    if (flags & (MOVEMENTFLAG_SWIMMING | MOVEMENTFLAG_FLYING) || flags2 & 0x20)
     {
         data >> pitch;
     }
@@ -942,22 +931,16 @@ void MovementInfo::init(WorldPacket& data)
     }*/
     if (flags & MOVEMENTFLAG_SPLINE_ELEVATION)
     {
-        data >> unk12;
+        data >> splineElevation;
     }
 
     data >> unklast;
-    if (data.rpos() != data.wpos())
-    {
-        if (data.rpos() + 4 == data.wpos())
-            data >> unk13;
-        else
-            LOG_DEBUG("Extra bits of movement packet left");
-    }
+ 
 }
 
-void MovementInfo::write(WorldPacket& data)
+void MovementInfo::WriteMovement(WorldPacket& data)
 {
-    data << flags << unk_230 << getMSTime();
+    data << flags << flags2 << getMSTime();
 
     data << x << y << z << orientation;
 
@@ -975,9 +958,8 @@ void MovementInfo::write(WorldPacket& data)
     }
     if (flags & MOVEMENTFLAG_SPLINE_ELEVATION)
     {
-        data << unk12;
+        data << splineElevation;
     }
     data << unklast;
-    if (unk13)
-        data << unk13;
+
 }
