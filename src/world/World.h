@@ -658,6 +658,10 @@ class SERVER_DECL World : public Singleton<World>, public EventableObject, publi
             uint32 SOTA_MAX;
             uint32 IOC_MIN;
             uint32 IOC_MAX;
+            uint32 TP_MIN;
+            uint32 TP_MAX;
+            uint32 TBFG_MIN;
+            uint32 TBFG_MAX;
             uint32 RBG_FIRST_WIN_HONOR;
             uint32 RBG_FIRST_WIN_ARENA;
             uint32 RBG_WIN_HONOR;

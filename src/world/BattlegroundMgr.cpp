@@ -44,6 +44,9 @@ CBattlegroundManager::CBattlegroundManager()
     avalibleInRandom.push_back(BATTLEGROUND_ARATHI_BASIN);
     avalibleInRandom.push_back(BATTLEGROUND_EYE_OF_THE_STORM);
     avalibleInRandom.push_back(BATTLEGROUND_STRAND_OF_THE_ANCIENT);
+    avalibleInRandom.push_back(BATTLEGROUND_ISLE_OF_CONQUEST);
+    avalibleInRandom.push_back(BATTLEGROUND_TWIN_PEAKS);
+    avalibleInRandom.push_back(BATTLEGROUND_THE_BATTLE_FOR_GILNEAS);
 }
 
 CBattlegroundManager::~CBattlegroundManager()
@@ -303,6 +306,9 @@ void CBattlegroundManager::HandleGetBattlegroundQueueCommand(WorldSession* m_ses
                     break;
                 case 7:
                     ss << " (<80)";
+                    break;
+                case 8:
+                    ss << " (<85)";
                     break;
             }
 
@@ -980,6 +986,10 @@ uint32 CBattlegroundManager::GetMinimumPlayers(uint32 dbcIndex)
             return sWorld.bgsettings.SOTA_MIN;
         case BATTLEGROUND_ISLE_OF_CONQUEST:
             return sWorld.bgsettings.IOC_MIN;
+        case BATTLEGROUND_TWIN_PEAKS:
+            return sWorld.bgsettings.TP_MIN;
+        case BATTLEGROUND_THE_BATTLE_FOR_GILNEAS:
+            return sWorld.bgsettings.TBFG_MIN;
         default:
             return 1;
     }
@@ -1008,6 +1018,10 @@ uint32 CBattlegroundManager::GetMaximumPlayers(uint32 dbcIndex)
             return sWorld.bgsettings.SOTA_MAX;
         case BATTLEGROUND_ISLE_OF_CONQUEST:
             return sWorld.bgsettings.IOC_MAX;
+        case BATTLEGROUND_TWIN_PEAKS:
+            return sWorld.bgsettings.TP_MAX;
+        case BATTLEGROUND_THE_BATTLE_FOR_GILNEAS:
+            return sWorld.bgsettings.TBFG_MAX;
         default:
             return 1;
     }
@@ -1102,6 +1116,15 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
             break;
         case BATTLEGROUND_STRAND_OF_THE_ANCIENT:
             n = 3;
+            break;
+        case BATTLEGROUND_ISLE_OF_CONQUEST:
+            n = 4;
+            break;
+        case BATTLEGROUND_TWIN_PEAKS:
+            n = 5;
+            break;
+        case BATTLEGROUND_THE_BATTLE_FOR_GILNEAS:
+            n = 6;
             break;
         default:
             n = 0;

@@ -46,7 +46,10 @@ enum BattlegroundDbcIndex
     BGDBC_STRAND_OF_THE_ANCIENT     = 9,
     BGDBC_DALARAN_SEWERS            = 10,
     BGDBC_RING_OF_VALOR             = 11,
-    BGDBC_ROWS                      = 11,
+    BGDBC_ISLE_OF_CONQUEST          = 12,
+    BGDBC_TWIN_PEAKS                = 13,
+    BGDBC_THE_BATTLE_FOR_GILNEAS    = 14,
+    BGDBC_ROWS                      = 14,
 };
 
 enum BattleGroundTypes
@@ -61,7 +64,13 @@ enum BattleGroundTypes
     BATTLEGROUND_STRAND_OF_THE_ANCIENT  = 9,
     BATTLEGROUND_ISLE_OF_CONQUEST       = 30,
     BATTLEGROUND_RANDOM                 = 32,
-    BATTLEGROUND_NUM_TYPES              = 33,   /// Based on BattlemasterList.dbc, make the storage arrays big enough! On 3.1.3 the last one was 11 The Ring of Valor, so 12 was enough here, but on 3.2.0 there is 32 All Battlegrounds!
+    BATTLEGROUND_RATED_10_BATTLEGROUNG  = 100,
+    BATTLEGROUND_RATED_15_BATTLEGROUNG  = 101,
+    BATTLEGROUND_RATED_5_BATTLEGROUNG   = 102,
+    BATTLEGROUND_TWIN_PEAKS             = 108,
+    BATTLEGROUND_THE_BATTLE_FOR_GILNEAS = 120,
+    BATTLEGROUND_RATED_EYE_OF_THE_STORM = 656,
+    BATTLEGROUND_NUM_TYPES              = 657,   /// Based on BattlemasterList.dbc, make the storage arrays big enough! On 3.1.3 the last one was 11 The Ring of Valor, so 12 was enough here, but on 3.2.0 there is 32 All Battlegrounds!
 };
 
 #define IS_ARENA(x) ((x) >= BATTLEGROUND_ARENA_2V2 && (x) <= BATTLEGROUND_ARENA_5V5)
@@ -169,8 +178,10 @@ static inline uint32 GetLevelGrouping(uint32 level)
         return 6;
     else if (level < 80)
         return 7;
-    else
+    else if (level < 85)
         return 8;
+    else
+        return 9;
 }
 
 static inline uint32 GetFieldCount(uint32 BGType)
@@ -185,6 +196,8 @@ static inline uint32 GetFieldCount(uint32 BGType)
         case BATTLEGROUND_ISLE_OF_CONQUEST:
             return 2;
         case BATTLEGROUND_EYE_OF_THE_STORM:
+        case BATTLEGROUND_TWIN_PEAKS:
+        case BATTLEGROUND_THE_BATTLE_FOR_GILNEAS:
             return 1;
         default:
             return 0;
