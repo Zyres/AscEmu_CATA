@@ -194,10 +194,6 @@ enum Opcodes
     SMSG_MOVE_UNSET_HOVER                           = 0x0F5,
     CMSG_MOVE_HOVER_ACK                             = 0x0F6,
     MSG_MOVE_HOVER                                  = 0x0F7,
-    CMSG_TRIGGER_CINEMATIC_CHEAT                    = 0x0F8,
-    CMSG_OPENING_CINEMATIC                          = 0x0F9,
-    CMSG_NEXT_CINEMATIC_CAMERA                      = 0x2014,
-    CMSG_COMPLETE_CINEMATIC                         = 0x2116,
     OBSOLETE_DROP_ITEM                              = 0x110,
     SMSG_OPEN_CONTAINER                             = 0x113,
     SMSG_INSPECT                                    = 0x4014,/*0x115,*/
@@ -219,8 +215,6 @@ enum Opcodes
     CMSG_SET_ACTION_BUTTON                          = 0x6F06,
     SMSG_SUPERCEDED_SPELL                           = 0x12C,
     CMSG_NEW_SPELL_SLOT                             = 0x12D,
-    CMSG_CANCEL_CAST                                = 0x12F,
-    SMSG_CAST_FAILED                                = 0x130,
     SMSG_SPELL_FAILURE                              = 0x133,
     SMSG_SPELL_COOLDOWN                             = 0x134,
     SMSG_COOLDOWN_EVENT                             = 0x135,
@@ -421,7 +415,6 @@ enum Opcodes
     SMSG_SPELLNONMELEEDAMAGELOG                     = 0x250,
     CMSG_LEARN_TALENT                               = 0x251,
     SMSG_RESURRECT_FAILED                           = 0x252,
-    CMSG_TOGGLE_PVP                                 = 0x253,
     SMSG_ZONE_UNDER_ATTACK                          = 0x254,
     MSG_AUCTION_HELLO                               = 0x255,
     CMSG_AUCTION_SELL_ITEM                          = 0x256,
@@ -602,7 +595,6 @@ enum Opcodes
     SMSG_SPLINE_MOVE_ROOT                           = 0x31A,
     CMSG_SET_EXPLORATION_ALL                        = 0x31B,
     SMSG_INVALIDATE_PLAYER                          = 0x31C,
-    CMSG_RESET_INSTANCES                            = 0x31D,
     SMSG_INSTANCE_RESET                             = 0x31E,
     SMSG_INSTANCE_RESET_FAILED                      = 0x31F,
     SMSG_UPDATE_LAST_INSTANCE                       = 0x320,
@@ -1132,6 +1124,10 @@ enum Opcodes
     SMSG_UPDATE_OBJECT                                  = 0x4715,
     SMSG_DESTROY_OBJECT                                 = 0x4724,
     CMSG_GAMEOBJ_USE                                    = 0x4E17,   // not sure
+    CMSG_TRIGGER_CINEMATIC_CHEAT                        = 0x0000,
+    CMSG_OPENING_CINEMATIC                              = 0x0A16,
+    CMSG_NEXT_CINEMATIC_CAMERA                          = 0x2014,
+    CMSG_COMPLETE_CINEMATIC                             = 0x2116,
     SMSG_TRIGGER_CINEMATIC                              = 0x6C27,
     SMSG_TUTORIAL_FLAGS                                 = 0x0B35,   // not sure
     CMSG_TUTORIAL_FLAG                                  = 0x6C26,
@@ -1298,12 +1294,13 @@ enum Opcodes
     CMSG_REQUEST_PVP_REWARDS                            = 0x780C,   // not implemented
     CMSG_REQUEST_RATED_BG_INFO                          = 0x2423,   // not implemented
     CMSG_REQUEST_RATED_BG_STATS                         = 0x05B3,   // not implemented
+    CMSG_RESET_INSTANCES                                = 0x6E14,
     CMSG_BATTLEMASTER_JOIN                              = 0x7902,
     CMSG_BATTLEMASTER_JOIN_ARENA                        = 0x710C,
     CMSG_LFG_JOIN                                       = 0x2430,
     CMSG_LFG_LEAVE                                      = 0x2433,
     CMSG_LFG_SET_COMMENT                                = 0x0530,   // not implemented
-
+    CMSG_LFG_LFR_JOIN                                   = 0x0531,   // not implemented
 
     // Calendar
     CMSG_CALENDAR_GET_CALENDAR                          = 0x2814,   // not implemented
@@ -1357,6 +1354,7 @@ enum Opcodes
     SMSG_ATTACKSWING_NOTSTANDING                        = 0x2B26,   // unchecked SMSG_ATTACKSWING_DEADTARGET
     SMSG_ATTACKSWING_CANT_ATTACK                        = 0x0016,   // unchecked
     SMSG_ATTACKERSTATEUPDATE                            = 0x0B25,   // unchecked
+    CMSG_TOGGLE_PVP                                     = 0x6815,
     CMSG_INSPECT                                        = 0x0927,
     CMSG_GUILD_BANK_MONEY_WITHDRAWN                     = 0x1225,   // unhandled
     SMSG_GUILD_BANK_MONEY_WITHDRAWN                     = 0x5DB4,   // unhandled
@@ -1365,7 +1363,8 @@ enum Opcodes
     CMSG_LF_GUILD_GET_APPLICATIONS                      = 0x1230,   // not implemented
     CMSG_LF_GUILD_BROWSE                                = 0x0548,   // not implemented
     CMSG_SET_TITLE                                      = 0x2117,
-
+    CMSG_CANCEL_CAST                                    = 0x0115,
+    SMSG_CAST_FAILED                                    = 0x4D16,
 
     CMSG_WORLD_STATE_UI_TIMER_UPDATE                    = 0x4605,
     SMSG_WORLD_STATE_UI_TIMER_UPDATE                    = 0x4A14,
